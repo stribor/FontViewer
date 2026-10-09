@@ -365,7 +365,7 @@ class FontPreviewEditor(private val file: VirtualFile) : UserDataHolderBase(), F
     }
     override fun getComponent(): JComponent = root
     override fun getPreferredFocusedComponent(): JComponent = grid
-    override fun getName() = "Font Preview"
+    override fun getName() = "Font Viewer"
     override fun getFile() = file
     override fun isModified() = false
     override fun isValid() = !disposed && file.isValid

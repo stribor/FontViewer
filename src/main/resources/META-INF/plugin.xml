@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>org.stribor.fontpreview</id>
-    <name>Font Preview</name>
+    <name>Font Viewer</name>
     <version>1.1.1</version>
     <change-notes>Remember font comparison zoom, Hide unchanged and Highlight outlines across comparisons and IDE restarts.</change-notes>
     <vendor>Stribor</vendor>

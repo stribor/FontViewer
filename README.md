@@ -1,4 +1,4 @@
-# Font Preview
+# Font Viewer
 
 An IntelliJ Platform plugin, written entirely in Kotlin, with plugin ID
 `org.stribor.fontpreview`. The editor uses Swing and Java2D from the IDE runtime.
