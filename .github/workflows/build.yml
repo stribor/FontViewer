@@ -91,6 +91,25 @@ jobs:
             "-PverificationArchive=${archives[0]}" \
             "-PverificationProduct=$VERIFICATION_PRODUCT" \
             "-PverificationVersion=$VERIFICATION_VERSION" | tee verifier.log
+      - name: Summarize compatibility results
+        if: always()
+        run: |
+          shopt -s nullglob
+          {
+            echo '## Plugin compatibility'
+            if [ -f verifier.log ]; then
+              echo '```text'
+              sed -n '/^\* What went wrong:/,/^\* Try:/p' verifier.log
+              echo '```'
+            fi
+            for report in build/reports/pluginVerifier/*/plugins/*/*/*.txt; do
+              case "$report" in */dependencies.txt|*/telemetry.txt) continue ;; esac
+              echo "### ${report##*/}"
+              echo '```text'
+              cat "$report"
+              echo '```'
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Upload compatibility reports
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

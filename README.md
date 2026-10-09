@@ -54,8 +54,8 @@ new font comparisons inherit your latest choices, including after an IDE restart
 - **Hide unchanged** hides matching glyphs in both grids. Turn it off to expand
   the full repertoire again. Empty glyphs such as spaces remain changes when
   their advance or bearings change.
-- **Previous change / Next change** navigate differences. IntelliJ's standard
-  previous/next difference actions also use the font comparison.
+- **Previous change / Next change** navigate differences. Font navigation actions
+  also appear in the diff toolbar and use your standard previous/next difference shortcuts.
 - Double-click a cell, press Enter, or use **Inspect / overlay** for enlarged
   paired views or an outline overlay. Origin, baseline and advance markers use
   shared coordinates so spacing and positioning changes remain visible.

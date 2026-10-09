@@ -6,11 +6,16 @@ import com.intellij.diff.contents.EmptyContent
 import com.intellij.diff.contents.FileContent
 import com.intellij.diff.requests.ContentDiffRequest
 import com.intellij.diff.requests.DiffRequest
-import com.intellij.diff.tools.util.PrevNextDifferenceIterable
 import com.intellij.diff.tools.util.base.DiffViewerBase
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
@@ -42,11 +47,19 @@ private class FontDiffViewer(context: DiffContext, request: ContentDiffRequest) 
     @Volatile private var rightFace = 0
     private val files = request.contents.map { (it as? FileContent)?.file }
     private val connection = ApplicationManager.getApplication().messageBus.connect(this)
-    private val navigation = object : PrevNextDifferenceIterable {
-        override fun canGoPrev() = panel.canGoChange(false)
-        override fun canGoNext() = panel.canGoChange(true)
-        override fun goPrev() = panel.goChange(false)
-        override fun goNext() = panel.goChange(true)
+    private val navigation = listOf(navigationAction(false), navigationAction(true))
+
+    private fun navigationAction(forward: Boolean): AnAction {
+        val standard = ActionManager.getInstance().getAction(if (forward) IdeActions.ACTION_NEXT_DIFF else IdeActions.ACTION_PREVIOUS_DIFF)
+        val title = if (forward) "Next font change" else "Previous font change"
+        return object : DumbAwareAction(title, title, standard.templatePresentation.icon) {
+            override fun getActionUpdateThread() = ActionUpdateThread.EDT
+            override fun update(event: AnActionEvent) { event.presentation.isEnabled = panel.canGoChange(forward) }
+            override fun actionPerformed(event: AnActionEvent) { panel.goChange(forward) }
+        }.apply {
+            copyShortcutFrom(standard)
+            registerCustomShortcutSet(panel, this@FontDiffViewer)
+        }
     }
 
     init {
@@ -67,7 +80,7 @@ private class FontDiffViewer(context: DiffContext, request: ContentDiffRequest) 
 
     override fun getComponent() = panel
     override fun getPreferredFocusedComponent() = panel.leftGrid
-    override fun getDifferenceIterable() = navigation
+    override fun createToolbarActions(): List<AnAction> = navigation + super.createToolbarActions()
     override fun onBeforeRediff() { panel.showLoading() }
     override fun performRediff(indicator: ProgressIndicator): Runnable {
         try {

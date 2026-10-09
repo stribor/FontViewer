@@ -20,6 +20,7 @@ Four independent Plugin Verifier jobs check that exact ZIP against:
 release API each time the workflow runs. EAP and RC releases are excluded. Each
 job uploads its logs and HTML/plain-text reports as **verifier-IU-minimum**,
 **verifier-IU-latest**, **verifier-CL-minimum**, or **verifier-CL-latest**.
+Verification verdicts and API findings also appear in each job's summary.
 
 Compatibility problems, invalid packages, missing dependencies, and prohibited
 internal, non-extendable, or override-only API usage fail verification. Other
