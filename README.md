@@ -12,8 +12,10 @@ IDE when prompted.
 
 Open a `.ttf`, `.otf`, `.ttc`, `.otc`, or `.woff` file in the project to preview it.
 The plugin targets IntelliJ Platform 2025.3 and later, including CLion.
-The local ZIP was compiled against CLion `263.6800.10`; interactive IDE testing
-and the JetBrains Plugin Verifier have not been run.
+Gradle builds compile against IntelliJ IDEA 2025.3, the minimum supported SDK.
+GitHub Actions runs regression checks and Plugin Verifier against minimum and
+latest stable IntelliJ IDEA and CLion releases. See [build and compatibility
+checks](docs/verification.md) for downloadable ZIPs, reports, and local commands.
 
 ## Use
 

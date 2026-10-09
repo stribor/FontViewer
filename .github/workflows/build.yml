@@ -1,0 +1,103 @@
+name: Build and verify
+
+on:
+  push:
+    branches: [master, main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and regression checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    outputs:
+      matrix: ${{ steps.targets.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+      - name: Select minimum and latest stable IDEs
+        id: targets
+        run: echo "matrix=$(python3 tools/verification-matrix.py)" >> "$GITHUB_OUTPUT"
+      - name: Build and check plugin
+        run: ./gradlew --no-daemon --console=plain check verifyPluginStructure buildPlugin | tee build.log
+      - name: Upload installable ZIP
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: plugin-distribution
+          path: build/distributions/*.zip
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload build reports and rendered regression previews
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: build-reports
+          path: |
+            build.log
+            build/reports/
+            build/verification/
+          retention-days: 14
+
+  verify:
+    name: Verify ${{ matrix.name }} ${{ matrix.version }} (${{ matrix.channel }})
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.build.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        with:
+          cache-read-only: true
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: plugin-distribution
+          path: build/verification-input
+      - name: Verify the built ZIP
+        env:
+          VERIFICATION_PRODUCT: ${{ matrix.product }}
+          VERIFICATION_VERSION: ${{ matrix.version }}
+        run: |
+          archives=(build/verification-input/*.zip)
+          test "${#archives[@]}" -eq 1
+          ./gradlew --no-daemon --console=plain verifyPlugin \
+            "-PverificationArchive=${archives[0]}" \
+            "-PverificationProduct=$VERIFICATION_PRODUCT" \
+            "-PverificationVersion=$VERIFICATION_VERSION" | tee verifier.log
+      - name: Upload compatibility reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: verifier-${{ matrix.product }}-${{ matrix.channel }}
+          path: |
+            verifier.log
+            build/reports/pluginVerifier/
+            build/reports/problems/
+          retention-days: 30
