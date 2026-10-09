@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.1 — 2026-10-09
+
+- Remember font comparison zoom, Hide unchanged and Highlight outlines across comparisons and IDE restarts.
+
+## 1.1.0 — 2026-10-09
+
+- Add a dedicated two-sided font diff tool, including added and deleted files.
+- Align Unicode and OpenType counterparts with explicit glyph ID fallback matches.
+- Share column counts, zoom, font-space origins, baselines, scrolling and selection.
+- Compare normalized outlines, metrics and mappings; color added, removed and modified glyphs.
+- Highlight removed and added outline regions and hide unchanged glyphs.
+- Add previous/next change navigation, per-side copies, collection face selection and paired/overlay inspection.
+- Cover matching, geometry, controls and large-font comparisons with synthetic fixtures and rendered regression checks.
+
 ## 1.0.2 — 2026-10-09
 
 - Hide unavailable character and Unicode copy actions in the context menu.

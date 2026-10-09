@@ -111,5 +111,6 @@ fun main(args: Array<String>) {
         check(grid.scrollableTracksViewportWidth)
         ImageIO.write(viewport, "png", output.resolve("large-grid-bottom.png").toFile())
     }
+    runFontDiffChecks(fixtures, ttf, substitutions, large.faces.single())
     println("Passed: Unicode copies, GSUB small caps/alternates/ligatures/extensions, TTF/OTF/WOFF, TTC faces, aliases, supplementary mappings, unmapped glyphs, malformed fonts, cancellation, native rendering and 20,005-glyph viewport.")
 }

@@ -57,7 +57,9 @@ if args.test:
     test_args = [str(root / "src/test/resources")]
     if args.roboto_italic:
         test_args.append(str(args.roboto_italic.resolve()))
-    subprocess.run([str(java), "-Djava.awt.headless=true", "-cp", str(test_classes) + os.pathsep + str(classes) + os.pathsep + classpath,
+    # IntelliJ's native scroll panes need the same Swing access granted by the IDE launcher.
+    subprocess.run([str(java), "--enable-native-access=ALL-UNNAMED", "--add-opens=java.desktop/javax.swing=ALL-UNNAMED",
+                    "--add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED", "-Djava.awt.headless=true", "-cp", str(test_classes) + os.pathsep + str(classes) + os.pathsep + classpath,
                     "org.stribor.fontpreview.RegressionChecksKt"] + test_args, check=True)
 
 version = next(line.split("=", 1)[1] for line in (root / "gradle.properties").read_text().splitlines() if line.startswith("pluginVersion="))

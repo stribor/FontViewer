@@ -19,7 +19,7 @@ dependencies {
 intellijPlatform {
     pluginConfiguration {
         ideaVersion { sinceBuild = "253" }
-        changeNotes = "Hide unavailable copy actions in the context menu. Keep Copy Glyph ID and Inspect Glyph available for every glyph."
+        changeNotes = "Remember font comparison zoom, Hide unchanged and Highlight outlines across comparisons and IDE restarts."
     }
 }
 val regressionTest by tasks.registering(JavaExec::class) {
@@ -28,5 +28,7 @@ val regressionTest by tasks.registering(JavaExec::class) {
     mainClass = "org.stribor.fontpreview.RegressionChecksKt"
     args(layout.projectDirectory.dir("src/test/resources").asFile.absolutePath)
     systemProperty("java.awt.headless", "true")
+    jvmArgs("--enable-native-access=ALL-UNNAMED", "--add-opens=java.desktop/javax.swing=ALL-UNNAMED",
+        "--add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED")
 }
 tasks.check { dependsOn(regressionTest) }

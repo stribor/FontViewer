@@ -7,7 +7,7 @@ It has no JCEF, Chromium, HTML, JavaScript, background polling, or bundled libra
 ## Install
 
 Use **Settings → Plugins → ⚙ → Install Plugin from Disk…** and select
-`build/distributions/font-preview-1.0.2.zip` in this directory. Restart the
+`build/distributions/font-preview-1.1.1.zip` in this directory. Restart the
 IDE when prompted.
 
 Open a `.ttf`, `.otf`, `.ttc`, `.otc`, or `.woff` file in the project to preview it.
@@ -33,6 +33,43 @@ and the JetBrains Plugin Verifier have not been run.
 
 Font size, selected face, glyph selection and sidebar visibility are saved in
 the IDE's editor state. VFS changes reload the preview in the background.
+
+## Compare font versions
+
+Open a two-sided comparison from version history, Git changes, or **Compare With…**.
+The **Font comparison** diff tool displays both versions with aligned cells,
+equal column counts, a shared zoom slider, and the same font-space origin and
+baseline. Clicking or navigating a glyph selects its counterpart on both sides;
+scrolling either grid scrolls the other. Added and removed glyphs have an empty
+counterpart cell. Comparisons with an absent file also work.
+Zoom, **Hide unchanged**, and **Highlight outlines** are shared preferences:
+new font comparisons inherit your latest choices, including after an IDE restart.
+
+- Green marks added glyphs, red removed glyphs, and amber modified glyphs.
+- **Highlight outlines** paints only the removed outline regions red in
+  the before grid and the added regions green in the after grid. Shared regions
+  retain the normal foreground color.
+- **Hide unchanged** hides matching glyphs in both grids. Turn it off to expand
+  the full repertoire again. Empty glyphs such as spaces remain changes when
+  their advance or bearings change.
+- **Previous change / Next change** navigate differences. IntelliJ's standard
+  previous/next difference actions also use the font comparison.
+- Double-click a cell, press Enter, or use **Inspect / overlay** for enlarged
+  paired views or an outline overlay. Origin, baseline and advance markers use
+  shared coordinates so spacing and positioning changes remain visible.
+- Each side retains copy actions; collection face selectors allow comparing
+  different faces. File changes recompute the comparison in the background.
+
+Matching uses Unicode mappings first, then unambiguous supported OpenType inputs.
+Glyphs with neither use an explicitly labeled **Glyph ID fallback**; these IDs
+can change between font builds, so an ID-based counterpart is not a guaranteed
+semantic match. Ambiguous OpenType variants remain unmatched. Outlines are
+compared geometrically at a normalized em size, including contours with different
+path ordering; advance and bearing changes and supported mapping changes also
+count. This compares the native monochrome outlines, not raster screenshots or
+all font tables. Changes to font hints, kerning, unsupported shaping, color layers
+or metadata alone do not count as glyph changes. Three-sided merge requests keep
+the platform's existing viewer.
 
 Supplementary characters are copied as two UTF-16 escapes, for example
 `\ud83d\ude80`, so the result works inside Kotlin and Java string literals.
@@ -92,7 +129,11 @@ install `fonttools` and run `python3 tools/generate-fixtures.py`. Checks cover T
 CFF/OTF, WOFF, two-face TTCs, Unicode aliases and supplementary characters,
 unmapped glyphs, GSUB small caps/alternates/ligatures/extension lookups,
 malformed data, cancellation, rendered outlines, and scrolling
-through a 20,005-glyph font. Grid renders are saved under `build/verification/`.
+through a 20,005-glyph font. Comparison checks cover reordered glyph IDs, Unicode
+aliases, OpenType matching, em normalization, outline and space-metric changes,
+additions/deletions, filtering, selection, scrolling, zoom, navigation and overlays.
+Generate comparison fixtures with `python3 tools/generate-diff-fixtures.py` after
+generating the base fixtures. Grid and diff renders are saved under `build/verification/`.
 To also check the reported Roboto Italic glyph 442 case, add
 `--roboto-italic /path/to/Roboto-Italic.ttf` to the offline test command.
 

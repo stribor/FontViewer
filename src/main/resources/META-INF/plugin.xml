@@ -1,8 +1,8 @@
 <idea-plugin>
     <id>org.stribor.fontpreview</id>
     <name>Font Preview</name>
-    <version>1.0.2</version>
-    <change-notes>Hide unavailable copy actions in the context menu. Keep Copy Glyph ID and Inspect Glyph available for every glyph.</change-notes>
+    <version>1.1.1</version>
+    <change-notes>Remember font comparison zoom, Hide unchanged and Highlight outlines across comparisons and IDE restarts.</change-notes>
     <vendor>Stribor</vendor>
     <idea-version since-build="253"/>
     <description><![CDATA[
@@ -15,5 +15,6 @@
         <fileType name="StriborFont" implementationClass="org.stribor.fontpreview.FontFileType"
                   fieldName="INSTANCE" extensions="ttf;otf;ttc;otc;woff"/>
         <fileEditorProvider implementation="org.stribor.fontpreview.FontEditorProvider"/>
+        <diff.DiffTool implementation="org.stribor.fontpreview.FontDiffTool" order="first"/>
     </extensions>
 </idea-plugin>
