@@ -1,0 +1,19 @@
+<idea-plugin>
+    <id>org.stribor.fontpreview</id>
+    <name>Font Preview</name>
+    <version>1.0.2</version>
+    <change-notes>Hide unavailable copy actions in the context menu. Keep Copy Glyph ID and Inspect Glyph available for every glyph.</change-notes>
+    <vendor>Stribor</vendor>
+    <idea-version since-build="253"/>
+    <description><![CDATA[
+        <p>Preview font repertoires in a native IntelliJ editor, with no browser runtime.</p>
+        <p>TTF, OTF, TTC, OTC and WOFF support. Resize glyphs, inspect font metadata,
+        switch collection faces, and copy characters, Unicode escapes or U+ notation.</p>
+    ]]></description>
+    <depends>com.intellij.modules.platform</depends>
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType name="StriborFont" implementationClass="org.stribor.fontpreview.FontFileType"
+                  fieldName="INSTANCE" extensions="ttf;otf;ttc;otc;woff"/>
+        <fileEditorProvider implementation="org.stribor.fontpreview.FontEditorProvider"/>
+    </extensions>
+</idea-plugin>
