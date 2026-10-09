@@ -1,8 +1,11 @@
 # Font Viewer
 
-An IntelliJ Platform plugin, written entirely in Kotlin, with plugin ID
-`org.stribor.fontpreview`. The editor uses Swing and Java2D from the IDE runtime.
-It has no JCEF, Chromium, HTML, JavaScript, background polling, or bundled libraries.
+Preview fonts and compare font versions directly in IntelliJ-based IDEs, including
+CLion. Browse glyphs, inspect font information, copy characters and Unicode values,
+and see which glyphs changed between versions.
+
+I originally built Font Viewer just for my own use. I decided to share it because
+others might find it useful too.
 
 ## Install
 
